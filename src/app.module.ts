@@ -1,9 +1,10 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { MongooseModule } from '@nestjs/mongoose';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { JokeModule } from './joke/joke.module';
+import { Joke } from './jokes/entities/joke.entity';
+import { JokesModule } from './jokes/jokes.module';
 
 @Module({
   imports: [
@@ -11,8 +12,17 @@ import { JokeModule } from './joke/joke.module';
       envFilePath: '.env',
       isGlobal: true,
     }),
-    MongooseModule.forRoot(process.env.MONGO_URI),
-    JokeModule,
+    TypeOrmModule.forRoot({
+      type: 'mysql',
+      host: 'localhost',
+      port: 3306,
+      username: 'root',
+      password: '',
+      database: 'test',
+      entities: [Joke],
+      synchronize: true,
+    }),
+    JokesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
